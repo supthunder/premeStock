@@ -26,7 +26,7 @@ def sendTweet(item,color,link):
 	tweet += strftime("%H:%M:%S", gmtime())
 
 	try:
-		api.update_status(tweet)
+		# api.update_status(tweet) 
 		print(tweet)
 	except:
 		print("Error sending tweet!")
@@ -45,6 +45,7 @@ def compareStock():
 	with open("stock.txt", 'r') as outfile:
 		oldStock = json.load(outfile)
 
+	# For testing:
 	# stock['170370']['Red'][0] = 1
 	change = 0
 	for ID in IDs.keys():
@@ -54,6 +55,11 @@ def compareStock():
 					item = IDs[ID]
 					link = "http://www.supremenewyork.com/#products/"+str(ID)
 					sendTweet(item,color,link)
+					# print("\n")
+					# cprint(item,"green")
+					# cprint(color,"blue")
+					# cprint(link,"red")
+					# print("\n")
 					change = 1
 				elif (1 in oldStock[ID][color]) and (1 not in stock[ID][color]):
 					change = 1

@@ -1,14 +1,34 @@
-# premeStock
+# premeStock 🤖
+![Alt Text](https://zippy.gfycat.com/BabyishWelloffEasteuropeanshepherd.gif)
 
 ## What it does:
 - Check for restocks
 - Load free proxies
 - Keep a master json of items
 
-## How To Use:
+## Montior:
 1. Create a masterstock.txt using masterStock.py
 2. Find item "id" in masterstock.txt, add what you want to IDs variable in monitor.py
+```python
+IDs = {"170370":"Faux Fur Bomber Jacket","170399":"Field Hooded Sweatshirt","170409":"Sade Tee"}
+```
 3. Set tokens.py to your twitter api keys, and uncomment back "api.update_status(tweet)"
-4. run monitor.py
+```python
+try:
+  # api.update_status(tweet) 
+  print(tweet)
+```
+to:
+```python
+try:
+  api.update_status(tweet) 
+  print(tweet)
+```
+*first run will throw an error b/c it creates a stock.txt*
 
-![Alt Text](https://zippy.gfycat.com/BabyishWelloffEasteuropeanshepherd.gif)
+## Proxies:
+1. Beta, but uses free proxies from the web, currently site2() works well
+2. You get 200 proxies from site2(), however I only cycle through 10, can change in montior.py up to 200
+```python
+proxyList = proxyList[:10] # I only load 10 to save time
+ ```

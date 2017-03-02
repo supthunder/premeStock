@@ -10,7 +10,7 @@
 1. Create a masterstock.txt using masterStock.py
 2. Find item "id" in masterstock.txt, add what you want to IDs variable in monitor.py
 
-\**This is to avoid a cluttered timeline, only monitor's items you want*
+\**This is to avoid a cluttered timeline, only monitor items you want*
 ```python
 IDs = {"170370":"Faux Fur Bomber Jacket","170399":"Field Hooded Sweatshirt","170409":"Sade Tee"}
 ```

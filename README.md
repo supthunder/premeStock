@@ -6,6 +6,9 @@
 - Load free proxies
 - Keep a master json of items
 
+# Currently live [@supszn](https://twitter.com/supszn) running every .5 seconds
+![Alt Text](http://i.imgur.com/FgTWh3n.png)
+
 ## Montior:
 1. Create a masterstock.txt using masterStock.py
 2. Find item "id" in masterstock.txt, add what you want to IDs variable in monitor.py
@@ -35,5 +38,3 @@ try:
 proxyList = proxyList[:10] # I only load 10 to save time
  ```
  ![Alt Text](http://i.imgur.com/chP9k85.gif)
- 
- 

@@ -7,7 +7,7 @@
 - Keep a master json of items
 
 ## Currently live [@supszn](https://twitter.com/supszn) running every .5 seconds
-![Alt Text](http://i.imgur.com/FgTWh3n.png)
+<img src="http://i.imgur.com/FgTWh3n.png" width="580">
 
 ## Montior:
 1. Create a masterstock.txt using masterStock.py

@@ -9,7 +9,8 @@
 ## Montior:
 1. Create a masterstock.txt using masterStock.py
 2. Find item "id" in masterstock.txt, add what you want to IDs variable in monitor.py
-*This is to avoid a cluttered timeline, only monitor's items you want*
+
+\**This is to avoid a cluttered timeline, only monitor's items you want*
 ```python
 IDs = {"170370":"Faux Fur Bomber Jacket","170399":"Field Hooded Sweatshirt","170409":"Sade Tee"}
 ```
@@ -25,7 +26,7 @@ try:
   api.update_status(tweet) 
   print(tweet)
 ```
-*first run will throw an error b/c it creates a stock.txt*
+\**first run will throw an error b/c it creates a stock.txt*
 
 ## Proxies:
 1. Beta, but uses free proxies from the web, currently site2() works well

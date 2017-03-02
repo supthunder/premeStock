@@ -28,7 +28,7 @@ try:
 
 ## Proxies:
 1. Beta, but uses free proxies from the web, currently site2() works well
-2. You get 200 proxies from site2(), however I only cycle through 10, can change in montior.py up to 200
+2. You get 200 proxies from site2(), however I only cycle through 10, can change value in montior.py
 ```python
 proxyList = proxyList[:10] # I only load 10 to save time
  ```

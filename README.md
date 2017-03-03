@@ -38,3 +38,7 @@ try:
 proxyList = proxyList[:10] # I only load 10 to save time
  ```
  ![Alt Text](http://i.imgur.com/chP9k85.gif)
+
+## To do:
+1. Sort proxies by delay ms
+2. Fix glitch that shows in stock yet can't checkout

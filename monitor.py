@@ -42,8 +42,12 @@ def getIp(proxy):
 def compareStock():
 	global IDs
 	global stock
-	with open("stock.txt", 'r') as outfile:
-		oldStock = json.load(outfile)
+	try:
+		with open("stock.txt", 'r') as outfile:
+			oldStock = json.load(outfile)
+	except:
+		with open("stock.txt", 'w') as outfile:
+			json.dump(stock, outfile)
 
 	# For testing:
 	# stock['170370']['Red'][0] = 1

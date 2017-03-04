@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from OpenSSL import SSL
+# from OpenSSL import SSL
 from termcolor import cprint
 import json
 

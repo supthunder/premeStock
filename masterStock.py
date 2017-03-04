@@ -13,5 +13,19 @@ def loadMasterStock():
 
 	print("Saved to masterstock.txt")
 
+	while(True):
+		try:
+			item = input("Enter item name to get id: ")
+		except:
+			print("Exiting...")
+			exit()
+		for itemCount in range(len(masterStock['products_and_categories']["new"])):
+			if item.lower() in str(masterStock['products_and_categories']["new"][itemCount]['name']).lower():
+				itemInfo = "'"+str(masterStock['products_and_categories']["new"][itemCount]['id'])+"':'"
+				itemInfo += str(masterStock['products_and_categories']["new"][itemCount]['name'])+"'"
+				print(itemInfo)
+
+
+
 if __name__ == '__main__':
 	loadMasterStock()

@@ -38,7 +38,10 @@ try:
 proxyList = proxyList[:10] # I only load 10 to save time
  ```
  ![Alt Text](http://i.imgur.com/chP9k85.gif)
-
+ 
+### How does it handle stock glitch?
+1. Waits 1hr once restocked to prevent repeated alerts
+![Alt Text](http://i.imgur.com/ymoBrlt.png)
 ## To do:
 1. Sort proxies by delay ms
-2. Fix glitch that shows in stock yet can't checkout
+2. Check actual website vs json for stock

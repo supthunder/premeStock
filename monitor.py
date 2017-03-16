@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import requests
 from bs4 import BeautifulSoup
 import concurrent.futures
@@ -9,9 +10,15 @@ from random import randint
 from datetime import datetime
 from termcolor import cprint
 from tokens import *
+import sys
 
-IDs = {"170370":"Faux Fur Bomber Jacket","170399":"Field Hooded Sweatshirt","170409":"Sade Tee"}
-proxies = {}
+# Use masterStock and insert ID's to monitor
+IDs = {'170462':'Denim Logo Chore Coat','170471':'Supreme®/LACOSTE Track Jacket','170474':'Supreme®/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme®/LACOSTE L/S Jersey Polo','170473':'Supreme®/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme®/LACOSTE Pique Crewneck','170472':'Supreme®/LACOSTE Track Pant','170470':'Supreme®/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme®/LACOSTE Pique Camp Cap','170459':'Studded Belt','170462':'Denim Logo Chore Coat','170471':'Supreme®/LACOSTE Track Jacket','170474':'Supreme®/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme®/LACOSTE L/S Jersey Polo','170473':'Supreme®/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme®/LACOSTE Pique Crewneck','170472':'Supreme®/LACOSTE Track Pant','170470':'Supreme®/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme®/LACOSTE Pique Camp Cap','170459':'Studded Belt'}
+
+
+# Get this from proxies.txt
+proxyList = [""]
+
 stock = {}
 
 def sendTweet(item,color,link):
@@ -23,7 +30,7 @@ def sendTweet(item,color,link):
 	tweet += color+'\n'
 	tweet += link+'\n'
 	tweet += "Restock!"+'\n'
-	tweet += strftime("%H:%M:%S", gmtime())
+	tweet += str(datetime.utcnow().strftime('%H:%M:%S.%f')[:-3])
 
 	try:
 		# api.update_status(tweet) 
@@ -46,11 +53,14 @@ def compareStock():
 		with open("stock.txt", 'r') as outfile:
 			oldStock = json.load(outfile)
 	except:
+		cprint("First run!","magenta")
 		with open("stock.txt", 'w') as outfile:
 			json.dump(stock, outfile)
+			exit()
 
 	# For testing:
-	# stock['170370']['Red'][0] = 1
+	# stock['170423']['Peach'][1] = 1
+	# stock['170423']['Light Blue'][1] = 1
 	change = 0
 	for ID in IDs.keys():
 		try:
@@ -72,6 +82,7 @@ def compareStock():
 
 
 		except:
+			print(ID)
 			cprint("Invalid ID","red")
 
 	if change == 1:
@@ -81,13 +92,34 @@ def compareStock():
 		cprint("No changes!","green",attrs=['bold'])
 
 def restockCheck(sku, extra):
+	global proxyList
 	global stock
-	global proxies
+
 
 	url = "http://www.supremenewyork.com/shop/" + str(sku) +".json"
 	user = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"}
-	r = requests.get(url, headers=user, proxies=proxies, timeout=5)
-	newStock = json.loads(r.text)
+
+	success = False
+	count = 0
+	while not success:
+		ip = proxyList[count]
+		proxies = {
+		  'http': ip,
+		  'https': ip
+		}
+		try:
+			cprint("Loading proxy: {}".format(ip),"blue")
+			r = requests.get(url, headers=user, proxies=proxies, timeout=2)
+			newStock = json.loads(r.text)
+			success = True
+			break # just incase lol
+		except:
+			print("excpet")
+			count += 1
+			if count == (len(proxyList) - 1):
+				exit()
+
+
 
 	colorDict = {}
 	for color in newStock['styles']:
@@ -97,9 +129,8 @@ def restockCheck(sku, extra):
 		colorDict[color['name']] = sizeStock
 	stock[sku] = colorDict
 
-
 def multiCheck(items):
-	with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+	with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
 		for item in items:
 			executor.submit(restockCheck, item, 60)
 
@@ -109,40 +140,43 @@ def loadProxies():
 		proxyList = json.load(outfile)
 	return proxyList
 
-
-def main():
-	start_time = time.time()
-	cprint(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "magenta")
-
+def main(argv):
 	global IDs
 	global stock
 
-	proxyList = loadProxies() # Load proxies
-	proxyList = proxyList[:10] # I only load 10 to save time
+	if len(sys.argv) > 1:
+		cprint("First run, saving stock.txt","green")
+		for ID in IDs.keys():
+			restockCheck(ID, 1)
+			time.sleep(.5)
 
-	IDlist = ["170370","170399","170409"] # Use masterStock and insert ID's to monitor
+		if stock:
+			with open("stock.txt", 'w') as outfile:
+				json.dump(stock, outfile)
+		cprint("stock.txt saved!","green")
+		exit()
 
-	for proxy in proxyList:
-		cprint("Using proxy: {}".format(proxy),"blue")
-		try:
-			# If you don't want threading: 
-			# for ID in IDs.keys():
-			# 	restockCheck(ID,stock)
-			# 	time.sleep(.5)
 
-			# Use threading:
-			multiCheck(list(IDs.keys()))
-			if stock:
-				compareStock()
-			break;
-		except:
-			cprint("ERROR","red", attrs=['bold'])
+	start_time = time.time()
+	cprint(str(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]), "magenta")
+	try:
+		# If you don't want threading: 
+		# for ID in IDs.keys():
+		# 	print("Checking: {}".format(ID))
+		# 	restockCheck(ID , proxy, 1)
+		# 	time.sleep(.5)
+
+		# Use threading:
+		multiCheck(list(IDs.keys()))
+		if stock:
+			compareStock()
+	except:
+		cprint("ERROR","red", attrs=['bold'])
 
 	cprint(str(time.time() - start_time)+" seconds", "magenta", attrs=['bold'])
 
 if __name__ == '__main__':
-	main()
-
+	main(sys.argv)
 
 
 

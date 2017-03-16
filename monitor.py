@@ -13,12 +13,11 @@ from tokens import *
 import sys
 
 # Use masterStock and insert ID's to monitor
-IDs = {'170462':'Denim Logo Chore Coat','170471':'Supreme®/LACOSTE Track Jacket','170474':'Supreme®/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme®/LACOSTE L/S Jersey Polo','170473':'Supreme®/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme®/LACOSTE Pique Crewneck','170472':'Supreme®/LACOSTE Track Pant','170470':'Supreme®/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme®/LACOSTE Pique Camp Cap','170459':'Studded Belt','170462':'Denim Logo Chore Coat','170471':'Supreme®/LACOSTE Track Jacket','170474':'Supreme®/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme®/LACOSTE L/S Jersey Polo','170473':'Supreme®/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme®/LACOSTE Pique Crewneck','170472':'Supreme®/LACOSTE Track Pant','170470':'Supreme®/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme®/LACOSTE Pique Camp Cap','170459':'Studded Belt'}
+IDs = {'170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket','170474':'Supreme/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme/LACOSTE L/S Jersey Polo','170473':'Supreme/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme/LACOSTE Pique Crewneck','170472':'Supreme/LACOSTE Track Pant','170470':'Supreme/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme/LACOSTE Pique Camp Cap','170459':'Studded Belt','170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket','170474':'Supreme/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme/LACOSTE L/S Jersey Polo','170473':'Supreme/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme/LACOSTE Pique Crewneck','170472':'Supreme/LACOSTE Track Pant','170470':'Supreme/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme/LACOSTE Pique Camp Cap','170459':'Studded Belt'}
 
 
 # Get this from proxies.txt
 proxyList = [""]
-
 stock = {}
 
 def sendTweet(item,color,link):
@@ -33,7 +32,7 @@ def sendTweet(item,color,link):
 	tweet += str(datetime.utcnow().strftime('%H:%M:%S.%f')[:-3])
 
 	try:
-		# api.update_status(tweet) 
+		# api.update_status(tweet)
 		print(tweet)
 	except:
 		print("Error sending tweet!")
@@ -49,38 +48,59 @@ def getIp(proxy):
 def compareStock():
 	global IDs
 	global stock
-	try:
-		with open("stock.txt", 'r') as outfile:
-			oldStock = json.load(outfile)
-	except:
-		cprint("First run!","magenta")
-		with open("stock.txt", 'w') as outfile:
-			json.dump(stock, outfile)
-			exit()
+	with open("stock.txt", 'r') as outfile:
+		oldStock = json.load(outfile)
 
 	# For testing:
 	# stock['170423']['Peach'][1] = 1
-	# stock['170423']['Light Blue'][1] = 1
+	# stock['170442']['Turquoise'][0] = 0
+
 	change = 0
 	for ID in IDs.keys():
 		try:
 			for color in stock[ID]:
-				if (1 in stock[ID][color]) and (1 not in oldStock[ID][color]):
-					item = IDs[ID]
-					link = "http://www.supremenewyork.com/#products/"+str(ID)
-					sendTweet(item,color,link)
-					# print("\n")
-					# cprint(item,"green")
-					# cprint(color,"blue")
-					# cprint(link,"red")
-					# print("\n")
-					change = 1
-				elif (1 in oldStock[ID][color]) and (1 not in stock[ID][color]):
-					change = 1
-					cprint(IDs[ID],"red")
-					cprint("OOS","red")
+				# Handle one size
+				sizeLen = len(stock[ID][color]) - 1
+				sizeLenCheck = False
+				if sizeLen == 0:
+					sizeLen = 1
+					sizeLenCheck = True
 
+				for size in range(0,sizeLen):
+					# print("diff {} : {}".format(stock[ID][color][size],oldStock[ID][color][size]))
+					if (stock[ID][color][size] == 1) and (oldStock[ID][color][size] == 0):
+						print("Restock!")
+						item = IDs[ID]
+						link = "http://www.supremenewyork.com/shop/"+str(ID)+"/"+str(ID)
+						sendTweet(item,color,link)
+						# print("\n")
+						# cprint(item,"green")
+						# cprint(color,"blue")
+						# cprint(link,"red")
+						# print("\n")
+						change = 1
 
+					elif (stock[ID][color][size] == 0) and (oldStock[ID][color][size] == 1):
+						print("OOS!")
+						stock[ID][color][size] = 2
+						with open("stock.txt", 'w') as outfile:
+							json.dump(stock, outfile)
+
+					if (oldStock[ID][color][size] > 1):
+						stock[ID][color][size] = oldStock[ID][color][size] + 1
+						cprint(ID+" - OOS! ++ "+str(stock[ID][color][size]),"yellow")
+						with open("stock.txt", 'w') as outfile:
+							json.dump(stock, outfile)
+
+					if (oldStock[ID][color][size] == 300):
+						print("OOS! MAX ")
+						stock[ID][color][size] = 0
+						cprint(IDs[ID],"red")
+						cprint("OOS","red")
+						change = 1
+
+					if sizeLenCheck:
+						break
 		except:
 			print(ID)
 			cprint("Invalid ID","red")
@@ -103,10 +123,14 @@ def restockCheck(sku, extra):
 	count = 0
 	while not success:
 		ip = proxyList[count]
-		proxies = {
-		  'http': ip,
-		  'https': ip
-		}
+
+		if count == 0:
+			proxies = {'https': ip}
+		else:
+			proxies = {
+			  'http': ip,
+			  'https': ip
+			}
 		try:
 			cprint("Loading proxy: {}".format(ip),"blue")
 			r = requests.get(url, headers=user, proxies=proxies, timeout=2)
@@ -114,11 +138,10 @@ def restockCheck(sku, extra):
 			success = True
 			break # just incase lol
 		except:
-			print("excpet")
+			cprint("Banned ::: "+ip,"red")
 			count += 1
 			if count == (len(proxyList) - 1):
 				exit()
-
 
 
 	colorDict = {}

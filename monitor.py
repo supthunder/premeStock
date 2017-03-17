@@ -11,6 +11,7 @@ from datetime import datetime
 from termcolor import cprint
 from tokens import *
 import sys
+import random
 
 # Use masterStock and insert ID's to monitor
 IDs = {'170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket','170474':'Supreme/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme/LACOSTE L/S Jersey Polo','170473':'Supreme/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme/LACOSTE Pique Crewneck','170472':'Supreme/LACOSTE Track Pant','170470':'Supreme/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme/LACOSTE Pique Camp Cap','170459':'Studded Belt','170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket','170474':'Supreme/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme/LACOSTE L/S Jersey Polo','170473':'Supreme/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme/LACOSTE Pique Crewneck','170472':'Supreme/LACOSTE Track Pant','170470':'Supreme/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme/LACOSTE Pique Camp Cap','170459':'Studded Belt'}
@@ -130,12 +131,12 @@ def restockCheck(sku, extra):
 		ip = proxyList[count]
 
 		if count == 0:
-			proxies = {'https': ip}
-		else:
-			proxies = {
-			  'http': ip,
-			  'https': ip
-			}
+			ip = proxyList[random.randint(0,(len(proxyList) - 1))]
+
+		proxies = {
+		  'http': ip,
+		  'https': ip
+		}
 		try:
 			cprint("Loading proxy: {}".format(ip),"blue")
 			r = requests.get(url, headers=user, proxies=proxies, timeout=2)

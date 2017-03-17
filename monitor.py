@@ -16,10 +16,11 @@ import random
 # Use masterStock and insert ID's to monitor
 IDs = {'170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket','170474':'Supreme/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme/LACOSTE L/S Jersey Polo','170473':'Supreme/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme/LACOSTE Pique Crewneck','170472':'Supreme/LACOSTE Track Pant','170470':'Supreme/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme/LACOSTE Pique Camp Cap','170459':'Studded Belt','170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket','170474':'Supreme/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme/LACOSTE L/S Jersey Polo','170473':'Supreme/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme/LACOSTE Pique Crewneck','170472':'Supreme/LACOSTE Track Pant','170470':'Supreme/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme/LACOSTE Pique Camp Cap','170459':'Studded Belt'}
 
-# IDs = {'170461':'Skew Nylon 5-Panel','170427':'Skew Nylon 5-Panel'}
+# IDs = {'170470':'Skew Nylon 5-Panel'}
 
 # Get this from proxies.txt
 proxyList = [""]
+sizeKey = ['OS','SMALL','MEDIUM','LARGE','XLARGE','S/M','L/XL','30','32','34','36']
 
 stock = {}
 
@@ -52,7 +53,7 @@ def getIp(proxy):
 def compareStock():
 	global IDs
 	global stock
-	sizeKey = ['OS','SMALL','MEDIUM','LARGE','XLARGE','S/M','L/XL'] # Add more if necessary
+	global sizeKey
 	with open("stock.txt", 'r') as outfile:
 		oldStock = json.load(outfile)
 
@@ -60,50 +61,56 @@ def compareStock():
 	# stock['170423']['Peach'][1] = 1
 	# stock['170427']['Peach']['sizes']['LARGE'] = 0
 	# stock['170462']['Red']['sizes']['MEDIUM'] = 1
+	# stock['170470']["Kelly Green"]['sizes']["LARGE"] = 1
+	# print(stock['170470']["Kelly Green"]['sizes'])
 	change = 0
 	for ID in IDs.keys():
 		try:
 			for color in stock[ID]:
-				for size in sizeKey:
-					# If size not in stock restocked!
-					if size in stock[ID][color]['sizes'].keys() and size not in oldStock[ID][color]['sizes'].keys():
-						change = 1
-						# print("New size!"+ str(stock[ID][color]['sizes'][size]))
-						oldStock[ID][color]['sizes'][size] = stock[ID][color]['sizes'][size]
-						cprint("New size restock!","yellow")
+				# for size in sizeKey:
+				# 	# If size not in stock restocked!
+				# 	if size in stock[ID][color]['sizes'].keys() and size not in oldStock[ID][color]['sizes'].keys():
+				# 		change = 1
+				# 		# print("New size!"+ str(stock[ID][color]['sizes'][size]))
+				# 		oldStock[ID][color]['sizes'][size] = stock[ID][color]['sizes'][size]
+				# 		cprint("New size restock!","yellow")
+				# 		item = IDs[ID]
+				# 		itemColor = stock[ID][color]['id']
+				# 		link = "http://www.supremenewyork.com/shop/"+"supszn/"+str(ID)+"/"+str(itemColor)
+				# 		itemSize = size
+				# 		sendTweet(item,color,link, itemSize)
+
+				for size in stock[ID][color]['sizes']:
+					# if ID == "170470" and size == "LARGE":
+					# 	print(size + " - "+color + " : " + str(stock[ID][color]['sizes'][size]))
+
+					if (stock[ID][color]['sizes'][size] == 1) and (oldStock[ID][color]['sizes'][size] == 0):
 						item = IDs[ID]
 						itemColor = stock[ID][color]['id']
 						link = "http://www.supremenewyork.com/shop/"+"supszn/"+str(ID)+"/"+str(itemColor)
 						itemSize = size
 						sendTweet(item,color,link, itemSize)
-
-			for size in stock[ID][color]['sizes']:
-				if (stock[ID][color]['sizes'][size] == 1) and (oldStock[ID][color]['sizes'][size] == 0):
-					item = IDs[ID]
-					itemColor = stock[ID][color]['id']
-					link = "http://www.supremenewyork.com/shop/"+"supszn/"+str(ID)+"/"+str(itemColor)
-					itemSize = size
-					sendTweet(item,color,link, itemSize)
-					change = 1
-
-				elif (stock[ID][color]['sizes'][size] == 0) and (oldStock[ID][color]['sizes'][size] == 1):
-					stock[ID][color]['sizes'][size] = 2
-					with open("stock.txt", 'w') as outfile:
-						json.dump(stock, outfile)
-
-
-				if (oldStock[ID][color]['sizes'][size] > 1):
-						stock[ID][color]['sizes'][size] = oldStock[ID][color]['sizes'][size] + 1
-						cprint(ID+" - OOS! ++ "+str(stock[ID][color]['sizes'][size]),"yellow")
 						with open("stock.txt", 'w') as outfile:
 							json.dump(stock, outfile)
 
-				if (oldStock[ID][color]['sizes'][size] == 300):
-						print("OOS! MAX ")
-						stock[ID][color]['sizes'][size] = 0
-						cprint(IDs[ID],"red")
-						cprint("OOS","red")
-						change = 1
+					elif (stock[ID][color]['sizes'][size] == 0) and (oldStock[ID][color]['sizes'][size] == 1):
+						stock[ID][color]['sizes'][size] = 2
+						with open("stock.txt", 'w') as outfile:
+							json.dump(stock, outfile)
+
+
+					if (oldStock[ID][color]['sizes'][size] > 1):
+							stock[ID][color]['sizes'][size] = oldStock[ID][color]['sizes'][size] + 1
+							cprint(ID+" - OOS! ++ "+str(stock[ID][color]['sizes'][size]),"yellow")
+							with open("stock.txt", 'w') as outfile:
+								json.dump(stock, outfile)
+
+					if (oldStock[ID][color]['sizes'][size] == 300):
+							print("OOS! MAX ")
+							stock[ID][color]['sizes'][size] = 0
+							cprint(IDs[ID],"red")
+							cprint("OOS","red")
+							change = 1
 		except:
 			print(ID)
 			print(oldStock[ID][color]['sizes'])
@@ -119,9 +126,8 @@ def compareStock():
 def restockCheck(sku, extra):
 	global proxyList
 	global stock
+	global sizeKey
 
-
-	url = "http://www.supremenewyork.com/shop/" + str(sku) + "/" + str(sku)
 	urlJson = "http://www.supremenewyork.com/shop/" + str(sku) +".json"
 	user = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"}
 
@@ -139,7 +145,6 @@ def restockCheck(sku, extra):
 		}
 		try:
 			cprint("Loading proxy: {}".format(ip),"blue")
-			r = requests.get(url, headers=user, proxies=proxies, timeout=2)
 			r2 = requests.get(urlJson, headers=user, proxies=proxies, timeout=2)
 			newStock = json.loads(r2.text)
 			success = True
@@ -150,11 +155,14 @@ def restockCheck(sku, extra):
 			if count == (len(proxyList) - 1):
 				exit()
 
-	data = r.text
-	soup = BeautifulSoup(data,"html.parser")
 
 	colorDict = {}
 	for color in newStock['styles']:
+		url = "http://www.supremenewyork.com/shop/" "sup/"+ str(sku) + "/" + str(color['id'])
+		r = requests.get(url, headers=user, proxies=proxies, timeout=2)
+		data = r.text
+		soup = BeautifulSoup(data,"html.parser")
+
 		sizeStock = {}
 		sizeStock["id"] = color['id']
 		stockDict = {}
@@ -172,11 +180,16 @@ def restockCheck(sku, extra):
 
 		elif "sold out" in status:
 			stockDict['None'] = 0
+			for size in sizeKey:
+				# print(size.text + " : " +size.get('value'))
+				stockDict[size] = 0
 		sizeStock['sizes'] = stockDict
 
 		colorDict[color['name']] = sizeStock
+		# time.sleep(.15) # to not get banned
 
 	stock[sku] = colorDict
+
 
 
 

@@ -20,228 +20,220 @@ IDs = {'170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket',
 
 # Get this from proxies.txt
 proxyList = [""]
+
 sizeKey = ['OS','SMALL','MEDIUM','LARGE','XLARGE','S/M','L/XL','30','32','34','36']
 
 stock = {}
 
 def sendTweet(item,color,link, size):
-	auth = tweepy.OAuthHandler(C_KEY, C_SECRET)
-	auth.set_access_token(A_TOKEN, A_TOKEN_SECRET)
-	api = tweepy.API(auth)
+    auth = tweepy.OAuthHandler(C_KEY, C_SECRET)
+    auth.set_access_token(A_TOKEN, A_TOKEN_SECRET)
+    api = tweepy.API(auth)
 
-	tweet = item+"\n"
-	tweet += color+'\n'
-	tweet += size.title()+'\n'
-	tweet += link+'\n'
-	tweet += "Restock!"+'\n'
-	tweet += str(datetime.utcnow().strftime('%H:%M:%S.%f')[:-3])
+    tweet = item+"\n"
+    tweet += color+'\n'
+    tweet += size.title()+'\n'
+    tweet += link+'\n'
+    tweet += "Restock!"+'\n'
+    tweet += str(datetime.utcnow().strftime('%H:%M:%S.%f')[:-3])
 
-	try:
-		# api.update_status(tweet)
-		print(tweet)
-	except:
-		print("Error sending tweet!")
+    try:
+        api.update_status(tweet)
+        print(tweet)
+    except:
+        print("Error sending tweet!")
 
 def getIp(proxy):
-	ip = proxy
-	global proxies
-	proxies = {
-	  'http': ip,
-	  'https': ip
-	}
+    ip = proxy
+    global proxies
+    proxies = {
+      'http': ip,
+      'https': ip
+    }
 
 def compareStock():
-	global IDs
-	global stock
-	global sizeKey
-	with open("stock.txt", 'r') as outfile:
-		oldStock = json.load(outfile)
+    global IDs
+    global stock
+    global sizeKey
+    with open("stock.txt", 'r') as outfile:
+        oldStock = json.load(outfile)
 
-	# For testing:
-	# stock['170423']['Peach'][1] = 1
-	# stock['170427']['Peach']['sizes']['LARGE'] = 0
-	# stock['170462']['Red']['sizes']['MEDIUM'] = 1
-	# stock['170470']["Kelly Green"]['sizes']["LARGE"] = 1
-	# print(stock['170470']["Kelly Green"]['sizes'])
-	change = 0
-	for ID in IDs.keys():
-		try:
-			for color in stock[ID]:
-				# for size in sizeKey:
-				# 	# If size not in stock restocked!
-				# 	if size in stock[ID][color]['sizes'].keys() and size not in oldStock[ID][color]['sizes'].keys():
-				# 		change = 1
-				# 		# print("New size!"+ str(stock[ID][color]['sizes'][size]))
-				# 		oldStock[ID][color]['sizes'][size] = stock[ID][color]['sizes'][size]
-				# 		cprint("New size restock!","yellow")
-				# 		item = IDs[ID]
-				# 		itemColor = stock[ID][color]['id']
-				# 		link = "http://www.supremenewyork.com/shop/"+"supszn/"+str(ID)+"/"+str(itemColor)
-				# 		itemSize = size
-				# 		sendTweet(item,color,link, itemSize)
+    # For testing:
+    # stock['170423']['Peach'][1] = 1
+    # stock['170427']['Peach']['sizes']['LARGE'] = 0
+    # stock['170462']['Red']['sizes']['MEDIUM'] = 1
+    # stock['170467']["Light Pink"]['sizes']["OS"] = 1
+    # print(stock['170467']["Kelly Green"]['sizes'])
+    change = 0
+    for ID in IDs.keys():
+        try:
+            for color in stock[ID]:
+                for size in stock[ID][color]['sizes']:
+                    if (stock[ID][color]['sizes'][size] == 1) and (oldStock[ID][color]['sizes'][size] == 0):
+                        item = IDs[ID]
+                        itemColor = stock[ID][color]['id']
+                        link = "http://www.supremenewyork.com/shop/"+"supszn/"+str(ID)+"/"+str(itemColor)
+                        itemSize = size
+                        sendTweet(item,color,link, itemSize)
+                        with open("stock.txt", 'w') as outfile:
+                            json.dump(stock, outfile, indent=4, sort_keys=True)
 
-				for size in stock[ID][color]['sizes']:
-					# if ID == "170470" and size == "LARGE":
-					# 	print(size + " - "+color + " : " + str(stock[ID][color]['sizes'][size]))
-
-					if (stock[ID][color]['sizes'][size] == 1) and (oldStock[ID][color]['sizes'][size] == 0):
-						item = IDs[ID]
-						itemColor = stock[ID][color]['id']
-						link = "http://www.supremenewyork.com/shop/"+"supszn/"+str(ID)+"/"+str(itemColor)
-						itemSize = size
-						sendTweet(item,color,link, itemSize)
-						with open("stock.txt", 'w') as outfile:
-							json.dump(stock, outfile)
-
-					elif (stock[ID][color]['sizes'][size] == 0) and (oldStock[ID][color]['sizes'][size] == 1):
-						stock[ID][color]['sizes'][size] = 2
-						with open("stock.txt", 'w') as outfile:
-							json.dump(stock, outfile)
+                    elif (stock[ID][color]['sizes'][size] == 0) and (oldStock[ID][color]['sizes'][size] == 1):
+                        stock[ID][color]['sizes'][size] = 2
+                        with open("stock.txt", 'w') as outfile:
+                            json.dump(stock, outfile, indent=4, sort_keys=True)
 
 
-					if (oldStock[ID][color]['sizes'][size] > 1):
-							stock[ID][color]['sizes'][size] = oldStock[ID][color]['sizes'][size] + 1
-							cprint(ID+" - OOS! ++ "+str(stock[ID][color]['sizes'][size]),"yellow")
-							with open("stock.txt", 'w') as outfile:
-								json.dump(stock, outfile)
+                    if (oldStock[ID][color]['sizes'][size] > 1):
+                            stock[ID][color]['sizes'][size] = oldStock[ID][color]['sizes'][size] + 1
+                            cprint(ID+" - OOS! ++ "+str(stock[ID][color]['sizes'][size]),"yellow")
+                            with open("stock.txt", 'w') as outfile:
+                                json.dump(stock, outfile, indent=4, sort_keys=True)
 
-					if (oldStock[ID][color]['sizes'][size] == 300):
-							print("OOS! MAX ")
-							stock[ID][color]['sizes'][size] = 0
-							cprint(IDs[ID],"red")
-							cprint("OOS","red")
-							change = 1
-		except:
-			print(ID)
-			print(oldStock[ID][color]['sizes'])
-			cprint("Invalid ID","red")
+                    if (oldStock[ID][color]['sizes'][size] == 300):
+                            print("OOS! MAX ")
+                            stock[ID][color]['sizes'][size] = 0
+                            cprint(IDs[ID],"red")
+                            cprint("OOS","red")
+                            change = 1
+        except:
+            print(ID)
+            print(oldStock[ID][color]['sizes'])
+            cprint("Invalid ID","red")
 
 
-	if change == 1:
-		with open("stock.txt", 'w') as outfile:
-			json.dump(stock, outfile)
-	if change == 0:
-		cprint("No changes!","green",attrs=['bold'])
+    if change == 1:
+        with open("stock.txt", 'w') as outfile:
+            json.dump(stock, outfile, indent=4, sort_keys=True)
+    if change == 0:
+        cprint("No changes!","green",attrs=['bold'])
 
 def restockCheck(sku, extra):
-	global proxyList
-	global stock
-	global sizeKey
+    global proxyList
+    global stock
+    global sizeKey
 
-	urlJson = "http://www.supremenewyork.com/shop/" + str(sku) +".json"
-	user = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"}
+    urlJson = "http://www.supremenewyork.com/shop/" + str(sku) +".json"
+    user = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"}
 
-	success = False
-	count = 0
-	while not success:
-		ip = proxyList[count]
+    success = False
+    count = 0
+    while not success:
+        ip = proxyList[count]
 
-		if count == 0:
-			ip = proxyList[random.randint(0,(len(proxyList) - 1))]
+        if count == 0:
+            ip = proxyList[random.randint(0,(len(proxyList) - 1))]
 
-		proxies = {
-		  'http': ip,
-		  'https': ip
-		}
-		try:
-			cprint("Loading proxy: {}".format(ip),"blue")
-			r2 = requests.get(urlJson, headers=user, proxies=proxies, timeout=2)
-			newStock = json.loads(r2.text)
-			success = True
-			break # just incase lol
-		except:
-			cprint("Banned ::: "+ip,"red")
-			count += 1
-			if count == (len(proxyList) - 1):
-				exit()
+        proxies = {
+          'http': ip,
+          'https': ip
+        }
+        try:
+            cprint("Loading proxy: {}".format(ip),"blue")
+            r2 = requests.get(urlJson, headers=user, proxies=proxies, timeout=2)
+            newStock = json.loads(r2.text)
+            success = True
+            break # just incase lol
+        except:
+            cprint("Banned ::: "+ip,"red")
+            count += 1
+            if count == (len(proxyList) - 1):
+                exit()
 
 
-	colorDict = {}
-	for color in newStock['styles']:
-		url = "http://www.supremenewyork.com/shop/" "sup/"+ str(sku) + "/" + str(color['id'])
-		r = requests.get(url, headers=user, proxies=proxies, timeout=2)
-		data = r.text
-		soup = BeautifulSoup(data,"html.parser")
+    colorDict = {}
+    for color in newStock['styles']:
+        url = "http://www.supremenewyork.com/shop/" "sup/"+ str(sku) + "/" + str(color['id'])
+        r = requests.get(url, headers=user, proxies=proxies, timeout=2)
+        data = r.text
+        soup = BeautifulSoup(data,"html.parser")
 
-		sizeStock = {}
-		sizeStock["id"] = color['id']
-		stockDict = {}
-		status = str(soup.find(id="add-remove-buttons"))
-		if "add to cart" in status:
-			# Get sizes
-			sizes = soup.find(id="size")
-			if sizes.find('option') == None:
-				# print("OS : "+sizes.get('value'))
-				stockDict['OS'] = 1
-			else:
-				for size in sizes.find_all('option'):
-					# print(size.text + " : " +size.get('value'))
-					stockDict[str(size.text).upper()] = 1
+        sizeStock = {}
+        sizeStock["id"] = color['id']
+        stockDict = {}
+        status = str(soup.find(id="add-remove-buttons"))
+        if "add to cart" in status:
+            # Get sizes
+            sizes = soup.find(id="size")
+            if sizes.find('option') == None:
+                # print("OS : "+sizes.get('value'))
+                stockDict['OS'] = 1
+                for size in sizeKey:
+                    if size not in  stockDict.keys():
+                        stockDict[size] = 0
+            else:
+                for size in sizes.find_all('option'):
+                    # print(size.text + " : " +size.get('value'))
+                    stockDict[str(size.text).upper()] = 1
+                for size in sizeKey:
+                    if size not in  stockDict.keys():
+                        stockDict[size] = 0
 
-		elif "sold out" in status:
-			stockDict['None'] = 0
-			for size in sizeKey:
-				# print(size.text + " : " +size.get('value'))
-				stockDict[size] = 0
-		sizeStock['sizes'] = stockDict
+        elif "sold out" in status:
+            stockDict['None'] = 0
+            for size in sizeKey:
+                # print(size.text + " : " +size.get('value'))
+                stockDict[size] = 0
+        sizeStock['sizes'] = stockDict
 
-		colorDict[color['name']] = sizeStock
-		# time.sleep(.15) # to not get banned
+        colorDict[color['name']] = sizeStock
+        # time.sleep(.15) # to not get banned
 
-	stock[sku] = colorDict
+    stock[sku] = colorDict
 
 
 
 
 def multiCheck(items):
-	with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
-		for item in items:
-			executor.submit(restockCheck, item, 60)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+        for item in items:
+            executor.submit(restockCheck, item, 60)
 
 def loadProxies():
-	proxyList = []
-	with open("proxies.txt", 'r') as outfile:
-		proxyList = json.load(outfile)
-	return proxyList
+    proxyList = []
+    with open("proxies.txt", 'r') as outfile:
+        proxyList = json.load(outfile)
+    return proxyList
 
 def main(argv):
-	global IDs
-	global stock
+    global IDs
+    global stock
 
-	if len(sys.argv) > 1:
-		cprint("First run, saving stock.txt","green")
-		for ID in IDs.keys():
-			restockCheck(ID, 1)
-			time.sleep(.5)
+    if len(sys.argv) > 1:
+        cprint("First run, saving stock.txt","green")
+        for ID in IDs.keys():
+            restockCheck(ID, 1)
+            time.sleep(.5)
 
-		if stock:
-			with open("stock.txt", 'w') as outfile:
-				json.dump(stock, outfile)
-		cprint("stock.txt saved!","green")
-		exit()
+        if stock:
+            with open("stock.txt", 'w') as outfile:
+                json.dump(stock, outfile, indent=4, sort_keys=True)
+        cprint("stock.txt saved!","green")
+        exit()
 
 
-	start_time = time.time()
-	cprint(str(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]), "magenta")
-	try:
-		# If you don't want threading: 
-		# for ID in IDs.keys():
-		# 	print("Checking: {}".format(ID))
-		# 	restockCheck(ID, 1)
-		# 	time.sleep(.5)
+    start_time = time.time()
+    cprint(str(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]), "magenta")
+    try:
+        # If you don't want threading: 
+        # for ID in IDs.keys():
+        #     print("Checking: {}".format(ID))
+        #     restockCheck(ID, 1)
+        #     time.sleep(.5)
 
-		# Use threading:
-		multiCheck(list(IDs.keys()))
-		# print(stock)
-		if stock:
-			compareStock()
-	except:
-		cprint("ERROR","red", attrs=['bold'])
+        # Use threading:
+        multiCheck(list(IDs.keys()))
+        # print(stock)
+        if stock:
+            compareStock()
+    except:
+        cprint("ERROR","red", attrs=['bold'])
 
-	cprint(str(time.time() - start_time)+" seconds", "magenta", attrs=['bold'])
+    cprint(str(time.time() - start_time)+" seconds", "magenta", attrs=['bold'])
 
 if __name__ == '__main__':
-	main(sys.argv)
+    main(sys.argv)
+
 
 
 

@@ -12,6 +12,7 @@ from termcolor import cprint
 from tokens import *
 import sys
 import random
+from slackclient import SlackClient
 
 # Use masterStock and insert ID's to monitor
 IDs = {'170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket','170474':'Supreme/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme/LACOSTE L/S Jersey Polo','170473':'Supreme/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme/LACOSTE Pique Crewneck','170472':'Supreme/LACOSTE Track Pant','170470':'Supreme/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme/LACOSTE Pique Camp Cap','170459':'Studded Belt'}
@@ -24,7 +25,31 @@ sizeKey = ['OS','SMALL','MEDIUM','LARGE','XLARGE','S/M','L/XL','30','32','34','3
 
 stock = {}
 
+
+def slackMsg(item,color,link, size):
+    # line 101
+    slack_token = ""
+
+    if slack_token == "":
+        return
+    sc = SlackClient(slack_token)
+
+    text = item+"\n"
+    text += color+'\n'
+    text += size.title()+'\n'
+    text += link+'\n'
+    text += "Restock!"+'\n'
+    text += str(datetime.utcnow().strftime('%H:%M:%S.%f')[:-3])
+
+    sc.api_call(
+      "chat.postMessage",
+      channel="#test",
+      text=text
+    )
+
+
 def sendTweet(item,color,link, size):
+    # line 102
     auth = tweepy.OAuthHandler(C_KEY, C_SECRET)
     auth.set_access_token(A_TOKEN, A_TOKEN_SECRET)
     api = tweepy.API(auth)
@@ -73,7 +98,10 @@ def compareStock():
                         itemColor = stock[ID][color]['id']
                         link = "http://www.supremenewyork.com/shop/"+"supszn/"+str(ID)+"/"+str(itemColor)
                         itemSize = size
+
                         sendTweet(item,color,link, itemSize)
+                        slackMsg(item,color,link, itemSize)
+
                         with open("stock.txt", 'w') as outfile:
                             json.dump(stock, outfile, indent=4, sort_keys=True)
 
@@ -232,7 +260,6 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv)
-
 
 
 

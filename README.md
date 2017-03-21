@@ -7,7 +7,7 @@
 - Keep a master json of items
 
 ## How to run:
-- Check Wiki
+- Check [Wiki](https://github.com/supthunder/premeStock/wiki/How-to-run)
 
 ## Currently live [@supszn](https://twitter.com/supszn) running every .5 seconds
 <img src="http://i.imgur.com/FgTWh3n.png" width="580">

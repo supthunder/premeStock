@@ -6,6 +6,9 @@
 - Load free proxies
 - Keep a master json of items
 
+## How to run:
+- Check Wiki
+
 ## Currently live [@supszn](https://twitter.com/supszn) running every .5 seconds
 <img src="http://i.imgur.com/FgTWh3n.png" width="580">
 

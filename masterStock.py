@@ -26,7 +26,12 @@ def loadMasterStock():
 			print("\n"+itemInfo)
 			exit()
 		for itemCount in range(len(masterStock['products_and_categories']["new"])):
-			if item.lower() in str(masterStock['products_and_categories']["new"][itemCount]['name']).lower():
+			if item.lower() == "new":
+				change = 0
+				itemInfo += "'"+str(masterStock['products_and_categories']["new"][itemCount]['id'])+"':'"
+				itemInfo += str(masterStock['products_and_categories']["new"][itemCount]['name'])+"'"
+
+			elif item.lower() in str(masterStock['products_and_categories']["new"][itemCount]['name']).lower():
 				change = 0
 				itemInfo += "'"+str(masterStock['products_and_categories']["new"][itemCount]['id'])+"':'"
 				itemInfo += str(masterStock['products_and_categories']["new"][itemCount]['name'])+"'"

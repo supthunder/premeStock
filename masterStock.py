@@ -12,18 +12,29 @@ def loadMasterStock():
 		json.dump(masterStock, outfile, indent=4, sort_keys=True)
 
 	print("Saved to masterstock.txt")
+	itemInfo = ""
+
 
 	while(True):
 		try:
+			change = 1
 			item = input("Enter item name to get id: ")
+			if itemInfo != "":
+				itemInfo += ","
 		except:
 			print("Exiting...")
+			print("\n"+itemInfo)
 			exit()
 		for itemCount in range(len(masterStock['products_and_categories']["new"])):
 			if item.lower() in str(masterStock['products_and_categories']["new"][itemCount]['name']).lower():
-				itemInfo = "'"+str(masterStock['products_and_categories']["new"][itemCount]['id'])+"':'"
+				change = 0
+				itemInfo += "'"+str(masterStock['products_and_categories']["new"][itemCount]['id'])+"':'"
 				itemInfo += str(masterStock['products_and_categories']["new"][itemCount]['name'])+"'"
-				print(itemInfo)
+				print("Added to list...")
+
+		if change:
+			print("Item not found!")
+
 
 
 

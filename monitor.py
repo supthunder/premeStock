@@ -28,7 +28,6 @@ stock = {}
 
 def slackMsg(item,color,link, size):
     # line 101
-    slack_token = ""
 
     if slack_token == "":
         return

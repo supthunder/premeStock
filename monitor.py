@@ -14,9 +14,9 @@ import sys
 import random
 from slackclient import SlackClient
 
-# Use masterStock and insert ID's to monitor
+# Get this from masterStock.py
 IDs = {'170462':'Denim Logo Chore Coat','170471':'Supreme/LACOSTE Track Jacket','170474':'Supreme/LACOSTE Harrington Jacket','170464':'Polka Dot S/S Shirt','170463':'Curve Logo Tee','170469':'Supreme/LACOSTE L/S Jersey Polo','170473':'Supreme/LACOSTE Tennis Sweater','170465':'666 Zip Up Sweat','170466':'Sequin Logo Hooded Sweatshirt','170468':'Supreme/LACOSTE Pique Crewneck','170472':'Supreme/LACOSTE Track Pant','170470':'Supreme/LACOSTE Pique Short','170460':'Leather Camp Cap','170461':'Skew Nylon 5-Panel','170467':'Supreme/LACOSTE Pique Camp Cap','170459':'Studded Belt'}
-# IDs = {'170470':'Skew Nylon 5-Panel'}
+IDs = {'170515':'Supreme®/The North Face® Trans Antarctica Expedition Pullover','170516':'Supreme®/The North Face® Trans Antarctica Expedition Fleece Jacket','170517':'Supreme®/The North Face® Trans Antarctica Expedition Pant','170514':'Supreme®/The North Face® Trans Antarctica Expedition Headband','170513':'Supreme®/The North Face® Trans Antarctica Expedition Big Haul Backpack'}
 
 # Get this from proxies.txt
 proxyList = [""]
@@ -88,6 +88,7 @@ def compareStock():
     # stock['170462']['Red']['sizes']['MEDIUM'] = 1
     # stock['170467']["Light Pink"]['sizes']["OS"] = 1
     # print(stock['170467']["Kelly Green"]['sizes'])
+    # etc...
     change = 0
     for ID in IDs.keys():
         try:
@@ -260,6 +261,3 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv)
-
-
-

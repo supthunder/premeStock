@@ -10,7 +10,7 @@
 
 ## How to run:
 1. Pre-reqs: [Python3](https://www.python.org/downloads/), [git](https://git-scm.com/downloads). (Both pre-installed on osx)
-2. Open terminal, clone project:
+2. Open terminal, ```git clone https://github.com/supthunder/premeStock.git```
 
 ![gif](/images/git.gif)
 

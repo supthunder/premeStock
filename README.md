@@ -11,7 +11,6 @@
 ## How to run:
 1. Pre-reqs: [Python3](https://www.python.org/downloads/), [git](https://git-scm.com/downloads). (Both pre-installed on osx)
 2. Open terminal, clone project:
-
 ![gif](/images/git.gif)
 
 3. (optional and beta) Create proxies (note if you use these faster than say 10s, supreme will ban you!)
@@ -28,9 +27,7 @@
 ![gif](/images/first.gif)
 
 7. Done, add twitter/slack tokens to tokens.py and run ```python monitor.py```
-
 ![gif](/images/restock.gif)
-
 ![gif](/images/nochange.gif)
 
 

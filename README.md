@@ -9,7 +9,7 @@
 ## Currently live [@supszn](https://twitter.com/supszn) running every 10 seconds
 
 ## How to run:
-1. Pre-reqs: [Python3](https://www.python.org/ftp/python/3.6.1/python-3.6.1-macosx10.6.pkg), git. (Both pre-installed on osx)
+1. Pre-reqs: [Python3](https://www.python.org/downloads/), [git](https://git-scm.com/downloads). (Both pre-installed on osx)
 2. Open terminal, clone project:
 
 ![gif](/images/first.gif)

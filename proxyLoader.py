@@ -130,11 +130,13 @@ def loadProxies():
 	proxiesList = []
 	cprint("Loading proxies...","green")
 
-	site4(proxiesList) # load proxies
+	site2(proxiesList) # load proxies
 
 	# proxiesList = ["13.85.80.251:443"]
 	# proxiesList = ["13.85.80.251:443"]
 	# proxiesList = ["144.217.16.78:3128"]
+	proxiesList = proxiesList[::-1]
+	proxiesList = proxiesList[:10]
 	proxiesList = filterConnections(proxiesList) # filter for working connections
 
 	# Write to file

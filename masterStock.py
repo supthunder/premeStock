@@ -23,11 +23,8 @@ def loadMasterStock():
 				itemInfo = itemInfo[:-1]
 			print("\n"+itemInfo)
 
-			with open("filteredStock.json",'w') as outfile:
-				outfile.write("filteredStock = {\n")
+			with open("filteredStock.txt",'w') as outfile:
 				outfile.write(itemInfo)
-				outfile.write("\n}")
-			print("\nSaved to filteredStock.json...")
 			exit()
 		if item == "new":
 			print("Getting all new items...")

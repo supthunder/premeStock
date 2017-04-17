@@ -14,5 +14,6 @@ pyparsing==2.1.10
 requests==2.13.0
 requests-oauthlib==0.8.0
 six==1.10.0
+slackclient==1.0.5
 termcolor==1.1.0
 tweepy==3.5.0

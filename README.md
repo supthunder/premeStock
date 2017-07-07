@@ -1,6 +1,8 @@
 # premeStock 🤖
 ![Alt Text](https://zippy.gfycat.com/BabyishWelloffEasteuropeanshepherd.gif)
 
+## I will update next season, couldnt finish with class etc, might switch to nodejs
+
 ## What it does:
 - Check for restocks
 - Send tweet/slack msg

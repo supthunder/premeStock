@@ -179,7 +179,7 @@ def restockCheck(sku, extra):
         sizeStock["id"] = color['id']
         stockDict = {}
         status = str(soup.find(id="add-remove-buttons"))
-        if "add to cart" in status:
+        if "add to basket" in status:
             # Get sizes
             sizes = soup.find(id="size")
             if sizes.find('option') == None:
